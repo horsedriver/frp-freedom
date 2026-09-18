@@ -298,9 +298,12 @@ class BypassManager:
                 if device_major not in method_majors:
                     return False
         
-        # Download/Odin mode can only use hardware methods.
+        # Download/Odin mode can only use verified hardware methods.
         if device.connection_type == 'download':
-            return method.category == 'hardware'
+            return (
+                method.category == 'hardware'
+                and method.name != 'download_mode_flash'
+            )
 
         # Check connection type requirements for normal devices
         if device.connection_type not in ['adb_unauthorized', 'adb_restricted']:
@@ -510,7 +513,11 @@ class BypassManager:
         """Get comprehensive AI analysis of the device"""
         if device.connection_type == "download":
             hardware_methods_enabled = bool(self.config.get("bypass_methods.hardware_methods", False))
-            compatible_methods = self.get_recommended_methods(device)
+            compatible_methods = [
+                method
+                for method in self.available_methods
+                if self._is_method_compatible(method, device)
+            ]
             method_names = [method.name for method in compatible_methods]
             if method_names:
                 strategy = "Download Mode detected. ADB is unavailable in this connection state. Compatible hardware methods are enabled; review implementation status before execution."

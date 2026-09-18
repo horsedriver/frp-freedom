@@ -38,6 +38,15 @@ def test_download_mode_only_accepts_hardware_methods():
     assert not manager._is_method_compatible(make_method("system"), device)
 
 
+def test_download_mode_flash_placeholder_is_not_compatible():
+    manager = BypassManager.__new__(BypassManager)
+    device = make_download_device()
+    method = make_method("hardware")
+    method.name = "download_mode_flash"
+
+    assert not manager._is_method_compatible(method, device)
+
+
 def test_hardware_manager_initializes_chipset_exploits():
     manager = HardwareExploitManager(Mock(), Mock())
 

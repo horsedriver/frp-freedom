@@ -31,6 +31,10 @@ def make_download_device():
 
 def test_download_mode_ai_analysis_is_diagnostic_not_vulnerability_scoring():
     manager = BypassManager(FakeConfig(), Mock())
+    manager.ai_engine.analyze_device = Mock(
+        side_effect=AssertionError("AI scoring must not run for Download Mode")
+    )
+
     analysis = manager.get_ai_device_analysis(make_download_device())
     profile = analysis["ai_analysis"]
 
@@ -41,6 +45,7 @@ def test_download_mode_ai_analysis_is_diagnostic_not_vulnerability_scoring():
     assert "Download Mode" in profile["security_assessment"]
     assert "ADB is unavailable" in profile["bypass_strategy"]
     assert "No implemented compatible methods are currently enabled" in profile["bypass_strategy"]
+    manager.ai_engine.analyze_device.assert_not_called()
 
 
 def test_download_mode_analysis_text_does_not_show_numeric_vulnerability_score():
