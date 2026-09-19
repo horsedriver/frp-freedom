@@ -148,7 +148,8 @@ def test_device_capability_summary_uses_canonical_connection_facts():
 
     text = format_capability_summary(capabilities)
 
-    assert "ADB Methods: Not Available" in text
-    assert "Fastboot Methods: Not Available" in text
-    assert "Hardware Methods: Disabled" in text
+    assert "ADB Transport: Not Available" in text
+    assert "Fastboot Transport: Not Available" in text
+    assert "Hardware Methods Configuration: Disabled" in text
+    assert "Interface Access: Limited" in text
     assert "AI Analysis: Diagnostic only" in text
