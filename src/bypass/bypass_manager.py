@@ -335,12 +335,11 @@ class BypassManager:
             }
 
         if connection_type in {"adb_unauthorized", "adb_restricted"}:
-            if method.category not in {"interface", "system"}:
-                return {
-                    "available": False,
-                    "status": "unsupported_connection_state",
-                    "reason": f"Method is unavailable in {connection_type} state.",
-                }
+            return {
+                "available": False,
+                "status": "unsupported_connection_state",
+                "reason": f"Method is unavailable in {connection_type} state.",
+            }
 
         if connection_type == "download" and method.category != "hardware":
             return {
@@ -668,6 +667,21 @@ class BypassManager:
             }
 
         device_profile = self.ai_engine.analyze_device(device)
+        compatible_names = {
+            method.name
+            for method in self.available_methods
+            if self.evaluate_method_capability(device, method)["available"]
+        }
+        recommended_methods = [
+            method_name
+            for method_name in device_profile.recommended_methods
+            if method_name in compatible_names
+        ]
+        success_probabilities = {
+            method_name: device_profile.success_probability[method_name]
+            for method_name in recommended_methods
+            if method_name in device_profile.success_probability
+        }
 
         return {
             "device_info": {
@@ -681,8 +695,8 @@ class BypassManager:
                 "complexity_score": device_profile.complexity_score,
                 "frp_complexity": device_profile.frp_complexity,
                 "vulnerability_score": device_profile.vulnerability_score,
-                "recommended_methods": device_profile.recommended_methods,
-                "success_probabilities": device_profile.success_probability,
+                "recommended_methods": recommended_methods,
+                "success_probabilities": success_probabilities,
                 "security_assessment": self._get_security_assessment_text(
                     device_profile.vulnerability_score
                 ),
