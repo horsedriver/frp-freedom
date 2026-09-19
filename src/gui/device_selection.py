@@ -370,10 +370,10 @@ Device Connection Guide
         ).title()
 
         return "\n".join([
-            f"ADB Methods: {'Available' if capabilities.get('adb_available') else 'Not Available'}",
-            f"Fastboot Methods: {'Available' if capabilities.get('fastboot_available') else 'Not Available'}",
-            f"Hardware Methods: {hardware_status}",
-            f"Interface Methods: {interface_status}",
+            f"ADB Transport: {'Available' if capabilities.get('adb_available') else 'Not Available'}",
+            f"Fastboot Transport: {'Available' if capabilities.get('fastboot_available') else 'Not Available'}",
+            f"Hardware Methods Configuration: {hardware_status}",
+            f"Interface Access: {interface_status}",
             f"AI Analysis: {ai_status}",
         ])
 
